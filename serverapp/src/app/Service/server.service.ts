@@ -1,6 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { stat } from 'fs';
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Status } from '../Enum/status.enum';
@@ -12,7 +11,7 @@ export class ServerService {
 
   constructor(private http: HttpClient) { }
 
-  private readonly apiUrl = 'http://localhost:8081/'
+  private readonly apiUrl = 'http://localhost:8081'
 
   // getServers(): Observable<CustomResponse> {
   // return this.http.get<CustomResponse>('http://localhost:8081/server/list');
@@ -45,8 +44,15 @@ export class ServerService {
       subscriber => {
         console.log(response);
         subscriber.next(
-          status === Status.ALL ? { ...response, message: `Servers filtered by ${status} status` }
-      ):
+          status === Status.ALL ? { ...response, message: `Servers filtered by ${status} status` } :
+          {
+            ...response,
+            message: response.data.servers.filter(server => server.status === status).length > 0 ? `Servers filtered by 
+            ${status === Status.SERVER_UP ? 'SERVER UP' : 'SERVER DOWN'} status` : `No servers of ${status} found`,
+            data: { servers: response.data.servers.filter(server => server.status === status)}
+          }
+        );
+      subscriber.complete()
       }
     )
       .pipe(
