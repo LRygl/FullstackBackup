@@ -7,7 +7,7 @@
                         <h2>Manage Servers</h2>
                     </div>
                     <div class="col-sm-6">
-                        <button type="button" class="btn btn-primary">Print Report</button>
+                        <button (click)="printReport()" type="button" class="btn btn-primary">Print Report</button>
 
                         <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
                             <i class="material-icons">&#xE147;</i>
@@ -15,7 +15,7 @@
                         </a>
 
                         <span>
-                            <select (ngModelChange)="filterServers($event)" name="status" ngModel="ALL"  
+                            <select name="status" ngModel="ALL"
                                 class="btn btn-info" style="height: 32.91px;">
                                 <option value="ALL">ALL</option>
                                 <option value="SERVER_UP">SERVER UP</option>
@@ -65,7 +65,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a class="delete" data-toggle="modal" style="cursor:pointer">
+                                    <a (click)="deleteServer(server)" class="delete" data-toggle="modal" style="cursor:pointer">
                                         <i class="material-icons" data-toggle="" title="Delete">&#xE872;</i>
                                     </a>
                                 </td>
@@ -78,8 +78,67 @@
                         {{appState.error}}
                     </div>
                 </ng-container>
-                
+
             </ng-container>
         </div>
     </div>
 </div>
+
+
+<div id="addEmployeeModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form #serverForm="ngForm" (ngSubmit)="saveServer(serverForm)">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Server</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="Ip">IP</label>
+            <input type="text" ngModel name="ipAddress" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="Ip">Name</label>
+            <input type="text" ngModel name="name" class="form-control" required>
+          </div>
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+              <div class="form-group">
+                <label for="">Memory</label>
+                <input type="text" ngModel name="memory" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+              <div class="form-group">
+                <label for="">Type</label>
+                <input type="text" ngModel name="type" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="">Status</label>
+            <select name="status" ngModel="SERVER_DOWN" class="form-control" required>
+              <option value="SERVER_UP">SERVER UP</option>
+              <option value="SERVER_UP">SERVER DOWN</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" id="closeModal" data-dismiss="modal">
+            CANCEL
+          </button>
+          <button type="submit" [disabled]="serverForm.invalid || (isLoading$ | async)" class="btn btn-success">
+            <i *ngIf="isLoading$ | async" class="fas fa-spinner fa-spin"></i>
+            <span *ngIf="isLoading$ | async" >Saving...</span>
+            <span *ngIf="!(isLoading$ | async)" >Add</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+
+<notifier-container></notifier-container>
